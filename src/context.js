@@ -93,10 +93,12 @@ const ProductProvider = props => {
     const selectedProduct = tempCart.find(i => i.id === id);
     const index = tempCart.indexOf(selectedProduct);
     const product = tempCart[index];
-    product.count -= 1;
-    if (product.count === 0) {
-      removeItem(id);
+
+    if (product.count === 1) {
+      // removeItem(id);
+      return;
     } else {
+      product.count -= 1;
       product.total = product.price * product.count;
       setCart([...tempCart]);
     }
