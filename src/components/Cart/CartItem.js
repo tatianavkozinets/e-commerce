@@ -1,7 +1,6 @@
 import React from "react";
 
 const CartItem = ({ item, value }) => {
-  console.log("------   ", item, value);
   const { id, title, img, price, total, count } = item;
   const { increment, decrement, removeItem } = value;
   return (

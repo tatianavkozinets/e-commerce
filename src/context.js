@@ -14,9 +14,14 @@ const ProductProvider = props => {
   const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
-    console.log("USE EFFECT 1 ");
     setProduct();
   }, []);
+
+  useEffect(() => {
+    console.log("useEffect");
+    addTotals();
+    // });
+  }, [cart]);
 
   const setProduct = () => {
     let tempProduct = [];
@@ -27,23 +32,13 @@ const ProductProvider = props => {
     setStoreProducts(tempProduct);
   };
 
-  useEffect(() => {
-    console.log("USE EFFECT");
-    addTotals();
-  }, [cart]);
-
-  const qsetProducts = () => {
-    let tempProsuct = [];
-    storeProducts.forEach(i => {
-      const signleItem = { ...i };
-      tempProsuct = [...tempProsuct, signleItem];
-    });
-  };
-
-  useEffect(() => {
-    console.log("USE EFFECT");
-    addTotals();
-  }, [cart]);
+  // const qsetProducts = () => {
+  //   let tempProsuct = [];
+  //   storeProducts.forEach(i => {
+  //     const signleItem = { ...i };
+  //     tempProsuct = [...tempProsuct, signleItem];
+  //   });
+  // };
 
   const getItem = id => {
     const product = storeProducts.find(item => item.id === id);
@@ -95,7 +90,6 @@ const ProductProvider = props => {
     const product = tempCart[index];
 
     if (product.count === 1) {
-      // removeItem(id);
       return;
     } else {
       product.count -= 1;

@@ -1,7 +1,6 @@
 import React from "react";
 
 const Default = props => {
-  console.log(props);
   return (
     <div className="container">
       <div className="row">
