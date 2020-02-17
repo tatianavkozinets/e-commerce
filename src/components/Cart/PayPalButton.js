@@ -49,6 +49,10 @@ export default class MyApp extends React.Component {
         onError={onError}
         onSuccess={onSuccess}
         onCancel={onCancel}
+        style={{        size: 'medium',
+            color: 'gold',
+            shape: 'pill',
+            label: 'checkout'}}
       />
     );
   }
