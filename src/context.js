@@ -143,6 +143,9 @@ const ProductProvider = props => {
         addToCart,
         openModal,
         closeModal,
+        increment,
+        decrement,
+        removeItem,
         clearCart
       }}
     >
