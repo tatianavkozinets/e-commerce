@@ -1,38 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import { storeProducts as a, detailProduct as b } from "./data";
+import shopReducer from "./components/shopReducer.js";
+import {
+  setStoreProducts,
+  setDetailProduct,
+  setCart,
+  setModalOpen,
+  setModalProduct,
+  setCartSubTotal,
+  setCartTax,
+  setCartTotal
+} from "./components/type";
 
 const ProductContext = React.createContext();
 
 const ProductProvider = props => {
-  const [storeProducts, setStoreProducts] = useState([]);
-  const [detailProduct, setDetailProduct] = useState(b);
-  const [cart, setCart] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalProduct, setModalProduct] = useState(detailProduct);
-  const [cartSubTotal, setCartSubTotal] = useState(0);
-  const [cartTax, setCartTax] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+  const ititialState = {
+    storeProducts: [],
+    detailProduct: b,
+    cart: [],
+    modalOpen: false,
+    modalProduct: b,
+    cartSubTotal: 0,
+    cartTax: 0,
+    cartTotal: 0
+  };
+
+  const [state, dispatch] = useReducer(shopReducer, ititialState);
+
+  const {
+    storeProducts,
+    detailProduct,
+    cart,
+    modalOpen,
+    modalProduct,
+    cartSubTotal,
+    cartTax,
+    cartTotal
+  } = state;
 
   useEffect(() => {
     setProduct();
   }, []);
 
   useEffect(() => {
-    console.log("useEffect");
-
     const addTotals = () => {
       let subTotal = 0;
       cart.map(i => (subTotal += i.total));
       const tempTax = subTotal * 0.1;
       const tax = parseFloat(tempTax.toFixed(2));
       const total = subTotal + tax;
-      setCartSubTotal(subTotal);
-      setCartTax(tax);
-      setCartTotal(total);
+      dispatch({ type: setCartSubTotal, cartSubTotal: subTotal });
+      dispatch({ type: setCartTax, cartTax: tax });
+      dispatch({ type: setCartTotal, cartTotal: total });
     };
 
     addTotals();
-    // });
   }, [cart]);
 
   const setProduct = () => {
@@ -41,16 +64,8 @@ const ProductProvider = props => {
       const singleItem = { ...i };
       tempProduct = [...tempProduct, singleItem];
     });
-    setStoreProducts(tempProduct);
+    dispatch({ type: setStoreProducts, storeProducts: tempProduct });
   };
-
-  // const qsetProducts = () => {
-  //   let tempProsuct = [];
-  //   storeProducts.forEach(i => {
-  //     const signleItem = { ...i };
-  //     tempProsuct = [...tempProsuct, signleItem];
-  //   });
-  // };
 
   const getItem = id => {
     const product = storeProducts.find(item => item.id === id);
@@ -59,7 +74,7 @@ const ProductProvider = props => {
 
   const handleDetail = id => {
     const product = getItem(id);
-    setDetailProduct(product);
+    dispatch({ type: setDetailProduct, detailProduct: product });
   };
 
   const addToCart = id => {
@@ -70,19 +85,18 @@ const ProductProvider = props => {
     product.count = 1;
     const price = product.price;
     product.total = price;
-
-    setStoreProducts(tempProducts);
-    setCart([...cart, product]);
+    dispatch({ type: setStoreProducts, storeProducts: tempProducts });
+    dispatch({ type: setCart, cart: [...cart, product] });
   };
 
   const openModal = id => {
     const product = getItem(id);
-    setModalProduct(product);
-    setModalOpen(true);
+    dispatch({ type: setModalProduct, modalProduct: product });
+    dispatch({ type: setModalOpen, modalOpen: true });
   };
 
   const closeModal = () => {
-    setModalOpen(false);
+    dispatch({ type: setModalOpen, modalOpen: false });
   };
 
   const increment = id => {
@@ -92,7 +106,7 @@ const ProductProvider = props => {
     const product = tempCart[index];
     product.count += 1;
     product.total = product.price * product.count;
-    setCart([...tempCart]);
+    dispatch({ type: setCart, cart: [...tempCart] });
   };
 
   const decrement = id => {
@@ -104,7 +118,7 @@ const ProductProvider = props => {
     if (product.count !== 1) {
       product.count -= 1;
       product.total = product.price * product.count;
-      setCart([...tempCart]);
+      dispatch({ type: setCart, cart: [...tempCart] });
     }
   };
 
@@ -119,12 +133,12 @@ const ProductProvider = props => {
     let tempCart = [...cart];
     tempCart = tempCart.filter(item => item.id !== id);
 
-    setStoreProducts(tempProducts);
-    setCart(tempCart);
+    dispatch({ type: setStoreProducts, storeProducts: tempProducts });
+    dispatch({ type: setCart, cart: tempCart });
   };
 
   const clearCart = () => {
-    setCart([]);
+    dispatch({ type: setCart, cart: [] });
     setProduct();
   };
 
